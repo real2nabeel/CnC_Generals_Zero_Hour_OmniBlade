@@ -212,7 +212,7 @@ target_include_directories(worldbuilder PRIVATE
     ../../GameEngineDevice/Include
 )
 
-target_compile_definitions(worldbuilder PRIVATE _AFXDLL)
+
 
 target_link_libraries(worldbuilder PRIVATE
     gameengine
@@ -228,7 +228,7 @@ target_link_libraries(worldbuilder PRIVATE
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
     target_link_options(worldbuilder PRIVATE /NODEFAULTLIB:libci.lib /NODEFAULTLIB:libc.lib)
-
+    target_compile_definitions(worldbuilder PRIVATE _AFXDLL)
     target_sources(worldbuilder PRIVATE res/WorldBuilder.rc)
     set_target_properties(worldbuilder PROPERTIES OUTPUT_NAME WorldBuilder)
 else()

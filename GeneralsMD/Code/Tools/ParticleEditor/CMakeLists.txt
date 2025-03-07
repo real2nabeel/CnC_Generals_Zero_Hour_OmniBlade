@@ -45,8 +45,6 @@ target_include_directories(particleeditor PRIVATE
     ../../Libraries/Source/WWVegas/WWSaveLoad
 )
 
-target_compile_definitions(particleeditor PRIVATE _AFXDLL)
-
 target_link_libraries(particleeditor PRIVATE
     stlport
     winmm
@@ -59,7 +57,7 @@ target_link_libraries(particleeditor PRIVATE
 
 if(WIN32 OR "${CMAKE_SYSTEM}" MATCHES "Windows")
     target_link_options(particleeditor PRIVATE /NODEFAULTLIB:libci.lib /NODEFAULTLIB:libc.lib)
-
+    target_compile_definitions(particleeditor PRIVATE _AFXDLL)
     target_sources(particleeditor PRIVATE ParticleEditor.rc)
     set_target_properties(particleeditor PROPERTIES OUTPUT_NAME ParticleEditor)
 else()
