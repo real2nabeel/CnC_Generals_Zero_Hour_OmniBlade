@@ -1,5 +1,7 @@
 # Build tools
 
+add_subdirectory(assetcull)
+add_subdirectory(Autorun)
 add_subdirectory(Babylon)
 add_subdirectory(buildVersionUpdate)
 add_subdirectory(Compress)
@@ -16,4 +18,5 @@ add_subdirectory(PATCHGET)
 add_subdirectory(textureCompress)
 add_subdirectory(timingTest)
 add_subdirectory(versionUpdate)
+add_subdirectory(wolSetup)
 add_subdirectory(WorldBuilder)
