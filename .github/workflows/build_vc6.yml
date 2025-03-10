@@ -1,7 +1,7 @@
 name: CMake on Windows
 
 on:
-  pull_request:
+  push:
     branches: [ "omni" ]
 
 
