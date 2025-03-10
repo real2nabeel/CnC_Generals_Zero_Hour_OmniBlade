@@ -1,8 +1,9 @@
 name: CMake on Windows
 
 on:
-  pull_request:
+  pull_request_target:
     branches: [ "blade/cmake-build" ]
+
 
 env:
   BUILD_TYPE: Release
