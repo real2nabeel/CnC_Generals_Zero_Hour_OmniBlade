@@ -1,8 +1,8 @@
 name: CMake on Windows
 
 on:
-  pull_request_target:
-    branches: [ "blade/cmake-build" ]
+  pull_request:
+    branches: [ "omni" ]
 
 
 env:
