@@ -18,36 +18,30 @@ jobs:
       run: git clone https://github.com/itsmattkc/MSVC600.git
 
     - name: Set up VC98 environment
+      shell: cmd
       run: |
-        # Set VC98 path relative to the cloned repo
-        $VC98_PATH = "${{ github.workspace }}\MSVC600\VC98"
-
-        # Run VCVARS32.bat to set up the Visual Studio environment
-        cmd.exe /C "$VC98_PATH\Bin\VCVARS32.bat"
-        
-        # Add VC98 paths to PATH
-        echo "$VC98_PATH\Bin" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
-        echo "$VC98_PATH\Lib" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
-        echo "$VC98_PATH\Include" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
-        echo "$VC98_PATH\Common\tools" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
-        echo "$VC98_PATH\Common\MSDev98\Bin" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
-
-        # Set environment variables
-        echo "LIB=$VC98_PATH\Lib;$VC98_PATH\MFC\Lib;${{ github.workspace }}\build\vc6" >> $env:GITHUB_ENV
-        echo "INCLUDE=$VC98_PATH\ATL\Include;$VC98_PATH\Include;$VC98_PATH\MFC\Include;$VC98_PATH\Include" >> $env:GITHUB_ENV
-        echo "CC=$VC98_PATH\Bin\CL.exe" >> $env:GITHUB_ENV
-        echo "CXX=$VC98_PATH\Bin\CL.exe" >> $env:GITHUB_ENV
-        echo "MSVCDir=$VC98_PATH" >> $env:GITHUB_ENV
-
+        set VC98_PATH=${{ github.workspace }}\MSVC600\VC98
+        call "%VC98_PATH%\Bin\VCVARS32.bat"
+        set >> %GITHUB_ENV%
+    
+    - name: Verify VC98 environment
+      shell: cmd
+      run: |
+        echo "Checking MSVC compiler..."
         where cl
-        where nmake
+        cl
+    
+    - name: Configure CMake with vc6 preset
+      shell: cmd
+      run: |
         cmake --preset vc6
-
-
-    - name: Verify CL.EXE is working
+    
+    - name: Build the project using nmake
+      shell: cmd
+      working-directory: ${{ github.workspace }}\build\vc6
       run: |
-        where cl
-        where nmake
+        nmake
+
 
     - name: Set reusable strings
       id: strings
