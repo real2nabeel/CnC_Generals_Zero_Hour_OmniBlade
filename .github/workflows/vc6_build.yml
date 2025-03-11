@@ -35,6 +35,9 @@ jobs:
         echo "CC=$VC98_PATH\Bin\CL.exe" >> $env:GITHUB_ENV
         echo "CXX=$VC98_PATH\Bin\CL.exe" >> $env:GITHUB_ENV
         echo "MSVCDir=$VC98_PATH" >> $env:GITHUB_ENV
+
+        # Run VCVARS32.bat to set up the Visual Studio environment
+        cmd.exe /C "$VC98_PATH\Bin\VCVARS32.bat"
         where cl
         where nmake
         cmake --preset vc6
