@@ -112,4 +112,3 @@ protected:
 extern ActionManager *TheActionManager;
 
 #endif  // end __ACTIONMANAGER_H_
-
