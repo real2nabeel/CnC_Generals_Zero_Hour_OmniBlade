@@ -1,9 +1,8 @@
 name: CMake on Windows
 
 on:
-  pull_request:
+  push:
     branches: [ "omni" ]
-
 
 env:
   BUILD_TYPE: Release
@@ -22,8 +21,23 @@ jobs:
       run: |
         # Set VC98 path relative to the cloned repo
         $VC98_PATH = "${{ github.workspace }}\MSVC600\VC98"
-        # Use cmd.exe to run VCVARS32.bat in batch mode, ensuring proper path formatting
-        cmd.exe /C "`"$VC98_PATH\Bin\VCVARS32.bat`""
+        
+        # Add VC98 paths to PATH
+        echo "$VC98_PATH\Bin" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
+        echo "$VC98_PATH\Lib" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
+        echo "$VC98_PATH\Include" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
+        echo "$VC98_PATH\Common\tools" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
+        echo "$VC98_PATH\Common\MSDev98\Bin" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
+
+        # Set environment variables
+        echo "LIB=$VC98_PATH\Lib;$VC98_PATH\MFC\Lib;${{ github.workspace }}\build\vc6" >> $env:GITHUB_ENV
+        echo "INCLUDE=$VC98_PATH\ATL\Include;$VC98_PATH\Include;$VC98_PATH\MFC\Include;$VC98_PATH\Include" >> $env:GITHUB_ENV
+        echo "CC=$VC98_PATH\Bin\CL.exe" >> $env:GITHUB_ENV
+        echo "CXX=$VC98_PATH\Bin\CL.exe" >> $env:GITHUB_ENV
+        echo "MSVCDir=$VC98_PATH" >> $env:GITHUB_ENV
+
+        # Run VCVARS32.bat to set up the Visual Studio environment
+        cmd.exe /C "$VC98_PATH\Bin\VCVARS32.bat"
 
     - name: Set reusable strings
       id: strings
@@ -32,21 +46,22 @@ jobs:
         echo "build-output-dir=${{ github.workspace }}\\build\\vc6" >> "$GITHUB_OUTPUT"
         echo "msvc600-path=${{ github.workspace }}\\MSVC600" >> "$GITHUB_OUTPUT"
 
-    - name: Configure CMake with vc6 preset
+    - name: Verify nmake and cl are available
       run: |
-        # Run cmake with vc6 preset
-        cmake --preset vc6
+        where nmake
+        where cl
+
+    - name: Configure CMake with vc6 preset
+      run: cmake --preset vc6
 
     - name: Build the project using nmake
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: |
         nmake
-        # Check for success message
         if %errorlevel% neq 0 exit /b %errorlevel%
 
     - name: Verify build success
       run: |
-        # Check if the build output directory exists and contains the built files
         if not exist "${{ steps.strings.outputs.build-output-dir }}\\<your_binary_name>" (
           echo "Build failed: <your_binary_name> not found!"
           exit 1
@@ -56,6 +71,4 @@ jobs:
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      run: |
-        # Run ctest to execute tests (if any)
-        ctest -C ${{env.BUILD_TYPE}}
+      run: ctest -C ${{env.BUILD_TYPE}}
