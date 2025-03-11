@@ -21,6 +21,9 @@ jobs:
       run: |
         # Set VC98 path relative to the cloned repo
         $VC98_PATH = "${{ github.workspace }}\MSVC600\VC98"
+
+        # Run VCVARS32.bat to set up the Visual Studio environment
+        cmd.exe /C "$VC98_PATH\Bin\VCVARS32.bat"
         
         # Add VC98 paths to PATH
         echo "$VC98_PATH\Bin" | Out-File -Append -Encoding utf8 $env:GITHUB_PATH
@@ -36,8 +39,6 @@ jobs:
         echo "CXX=$VC98_PATH\Bin\CL.exe" >> $env:GITHUB_ENV
         echo "MSVCDir=$VC98_PATH" >> $env:GITHUB_ENV
 
-        # Run VCVARS32.bat to set up the Visual Studio environment
-        cmd.exe /C "$VC98_PATH\Bin\VCVARS32.bat"
         where cl
         where nmake
         cmake --preset vc6
