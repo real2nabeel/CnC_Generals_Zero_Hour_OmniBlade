@@ -24,13 +24,6 @@ jobs:
         call "%VC98_PATH%\Bin\VCVARS32.bat"
         set >> %GITHUB_ENV%
     
-    - name: Verify VC98 environment
-      shell: cmd
-      run: |
-        echo "Checking MSVC compiler..."
-        where cl
-        cl
-    
     - name: Configure CMake with vc6 preset
       shell: cmd
       run: |
@@ -41,33 +34,3 @@ jobs:
       working-directory: ${{ github.workspace }}\build\vc6
       run: |
         nmake
-
-
-    - name: Set reusable strings
-      id: strings
-      shell: bash
-      run: |
-        echo "build-output-dir=${{ github.workspace }}\\build\\vc6" >> "$GITHUB_OUTPUT"
-        echo "msvc600-path=${{ github.workspace }}\\MSVC600" >> "$GITHUB_OUTPUT"
-
-    - name: Configure CMake with vc6 preset
-      run: cmake --preset vc6
-
-    - name: Build the project using nmake
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      run: |
-        nmake
-        if %errorlevel% neq 0 exit /b %errorlevel%
-
-    - name: Verify build success
-      run: |
-        if not exist "${{ steps.strings.outputs.build-output-dir }}\\<your_binary_name>" (
-          echo "Build failed: <your_binary_name> not found!"
-          exit 1
-        ) else (
-          echo "Build succeeded: <your_binary_name> found!"
-        )
-
-    - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      run: ctest -C ${{env.BUILD_TYPE}}
