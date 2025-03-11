@@ -20,7 +20,10 @@ jobs:
     - name: Set up VC98 environment
       run: |
         $VC98_PATH = "${{ github.workspace }}\MSVC600\VC98"
-        cmd.exe /C "$VC98_PATH\Bin\VCVARS32.bat && set" | Out-File -FilePath $env:GITHUB_ENV -Append
+        cmd.exe /C "$VC98_PATH\Bin\VCVARS32.bat"
+        where cl
+        where nmake
+        cmake --preset vc6
 
     - name: Verify CL.EXE is working
       run: |
