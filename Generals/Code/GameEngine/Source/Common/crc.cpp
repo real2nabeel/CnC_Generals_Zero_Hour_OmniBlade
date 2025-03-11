@@ -78,5 +78,3 @@ UnsignedInt CRC::get( void )
 	return tcrc;
 
 }  // end skip
-
-
